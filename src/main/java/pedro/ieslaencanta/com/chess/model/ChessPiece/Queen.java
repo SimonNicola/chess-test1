@@ -33,7 +33,7 @@ public class Queen extends Piece {
     @Override
     public Move[] getMoves(Board board) {
         int c = 0, i;
-        if (this.moves == null) {
+       // if (this.moves == null) {
             this.moves = new Move[28];
             Move tempo[];
             boolean nulo = false;
@@ -102,7 +102,7 @@ public class Queen extends Piece {
                 }
             }
 
-        }
+       // }
         return moves;
     }
 

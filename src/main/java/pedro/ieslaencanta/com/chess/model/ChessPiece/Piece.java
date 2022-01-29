@@ -4,6 +4,8 @@
  */
 package pedro.ieslaencanta.com.chess.model.ChessPiece;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pedro.ieslaencanta.com.chess.model.Board;
 import pedro.ieslaencanta.com.chess.model.Move;
 import pedro.ieslaencanta.com.chess.model.Position;
@@ -44,21 +46,28 @@ public abstract class Piece {
      * @return devuelve un movimiento
      */
     public Move move(Board board, int row, int col) {
-        //se crea el movimiento
-        Position origin = this.getPosition().clone();
-        Position end = new Position(row, col);
-        Piece p = board.getCell(row, col).getPiece();
-        //en caso de que el destino tenga pieza, se elimina
-        if (p != null) {
-            p.setAlive(false);
+        Move move=null;
+        try {
+            //se crea el movimiento
+            Position origin;
+            origin= this.getPosition().clone();
+            Position end = new Position(row, col);
+            Piece p = board.getCell(row, col).getPiece();
+            //en caso de que el destino tenga pieza, se elimina
+            if (p != null) {
+                p.setAlive(false);
+            }
+            move = new Move(this, p, origin, end);
+            //se actualiza la posición
+            this.getPosition().setRow(row);
+            this.getPosition().setCol(col);
+            //al mover la pieza ya no se tiene esos movimientos
+            //this.moves = null;
+           
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(Piece.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Move move = new Move(this, p, origin, end);
-        //se actualiza la posición
-        this.getPosition().setRow(row);
-        this.getPosition().setCol(col);
-        //al mover la pieza ya no se tiene esos movimientos
-        this.moves = null;
-        return move;
+         return move;
     }
 
     protected Move[] getHorizontalMoves(Board b, int row, int start, int end) {
@@ -68,7 +77,7 @@ public abstract class Piece {
 
         Piece p = null;
         //para la condicion del for que se evalue el ultimo
-        if (end < start) {
+        if (end < start && start-end>1) {
             end = end - 1;
         }
         for (int i = start; i != end && p == null && i >= 0 && i < b.getWidht(); i = i + ((start > end) ? -1 : 1)) {
@@ -78,10 +87,14 @@ public abstract class Piece {
                     && (b.getCell(row, i).getPiece() == null
                     || (b.getCell(row, i).getPiece() != null && b.getCell(row, i).getPiece().getType() != this.getType()))) {
 
-                moves[c] = new Move(this,
-                        b.getCell(row, i).getPiece(),
-                        this.getPosition().clone(), new Position(row, i));
-                c++;
+                try {
+                    moves[c] = new Move(this,
+                            b.getCell(row, i).getPiece(),
+                            this.getPosition().clone(), new Position(row, i));
+                    c++;
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(Piece.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             if (b.getCell(row, i).getPiece() != null) {
                 p = b.getCell(row, i).getPiece();
@@ -96,7 +109,7 @@ public abstract class Piece {
         int c = 0;
         Piece p = null;
         //para la condicion del for que se evalue
-        if (end < start) {
+        if (end < start && start-end>1) {
             end = end - 1;
         }
 
@@ -105,7 +118,11 @@ public abstract class Piece {
                     && i >= 0
                     && (b.getCell(i, col).getPiece() == null
                     || (b.getCell(i, col).getPiece() != null && b.getCell(i, col).getPiece().getType() != this.getType()))) {
-                moves[c] = new Move(this, b.getCell(i, col).getPiece(), this.getPosition().clone(), new Position(i, col));
+                try {
+                    moves[c] = new Move(this, b.getCell(i, col).getPiece(), this.getPosition().clone(), new Position(i, col));
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(Piece.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 c++;
             }
             if (b.getCell(i, col).getPiece() != null) {
@@ -146,8 +163,12 @@ public abstract class Piece {
                 i = i + diry, j = j + dirx) {
             if ((b.getCell(i, j).getPiece() == null
                     || (b.getCell(i, j).getPiece() != null && b.getCell(i, j).getPiece().getType() != this.getType()))) {
-                moves[c] = new Move(this, b.getCell(i, j).getPiece(), this.getPosition().clone(), new Position(i, j));
-                c++;
+                try {
+                    moves[c] = new Move(this, b.getCell(i, j).getPiece(), this.getPosition().clone(), new Position(i, j));
+                    c++;
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(Piece.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             if (b.getCell(i, j).getPiece() != null) {
                 p = b.getCell(i, j).getPiece();
@@ -251,10 +272,5 @@ public abstract class Piece {
         this.id = this.letter + ((this.getType() == PieceType.White) ? "W" : "B") + id;
     }
 
-    /**
-     * @return the moves
-     */
-    public Move[] getMoves() {
-        return moves;
-    }
+   
 }

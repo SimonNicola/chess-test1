@@ -4,6 +4,8 @@
  */
 package pedro.ieslaencanta.com.chess.model.ChessPiece;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pedro.ieslaencanta.com.chess.model.Board;
 import pedro.ieslaencanta.com.chess.model.Move;
 import pedro.ieslaencanta.com.chess.model.Position;
@@ -58,8 +60,12 @@ public class Knight extends Piece {
                     //se anyade si el destino es nulo o en caso de no ser nulo es una celda con ficha de diferente color
                     if (board.getCell(fila, columna).getPiece() == null
                             || (board.getCell(fila, columna).getPiece() != null && board.getCell(fila, columna).getPiece().getType() != this.getType())) {
-                        moves[contador] = new Move(this, board.getCell(fila, columna).getPiece(), this.p.clone(), new Position(fila, columna));
-                        contador++;
+                        try {
+                            moves[contador] = new Move(this, board.getCell(fila, columna).getPiece(), this.p.clone(), new Position(fila, columna));
+                            contador++;
+                        } catch (CloneNotSupportedException ex) {
+                            Logger.getLogger(Knight.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }

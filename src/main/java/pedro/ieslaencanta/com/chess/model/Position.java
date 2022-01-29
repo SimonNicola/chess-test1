@@ -8,7 +8,7 @@ package pedro.ieslaencanta.com.chess.model;
  *
  * @author Pedro
  */
-public class Position {
+public class Position implements Cloneable {
 
     private int row;
     private int col;
@@ -24,7 +24,7 @@ public class Position {
     }
 
     @Override
-    public Position clone() {
+    public Position clone() throws CloneNotSupportedException {
         return new Position(this.row, this.col);
     }
 
@@ -59,7 +59,7 @@ public class Position {
     public void setCol(int col) {
         this.col = col;
     }
-
+    
     @Override
     public boolean equals(Object o) {
         boolean vuelta = false;

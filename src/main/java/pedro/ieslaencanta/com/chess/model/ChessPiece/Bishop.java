@@ -27,42 +27,49 @@ public class Bishop extends Piece {
         this.setId(id);
     }
 
-
     @Override
     public Move[] getMoves(Board board) {
         //14 posibles movimiento 13 celdas menos una que ocupaha
         int c = 0, i;
-        if (this.moves == null) {
-            this.moves = new Move[28];
-            Move tempo[];
-            boolean nulo = false;
-            tempo = this.getDiagonal(board, 1, -1);
-            for (i = 0; i < tempo.length && !nulo; i++) {
-                moves[c] = tempo[i];
+        //if (this.moves == null) {
+        this.moves = new Move[28];
+        Move tempo[];
+        boolean nulo = false;
+        tempo = this.getDiagonal(board, 1, -1);
+        for (i = 0; i < tempo.length && !nulo; i++) {
+            if (tempo[i] != null) {
+                this.moves[c] = tempo[i];
                 c++;
-            }
-            //diagonal arriba izquierda columnas-1, filas-1
-            tempo = this.getDiagonal(board, -1, -1);
-            for (i = 0; i < tempo.length && !nulo; i++) {
-                moves[c] = tempo[i];
-                c++;
-            }
-            //diagonal abajo derecha columnas+1, filas-1
-            tempo = this.getDiagonal(board, 1, 1);
-            for (i = 0; i < tempo.length && !nulo; i++) {
-                moves[c] = tempo[i];
-                c++;
-            }
-            //diagonal abajo izquierda columnas+1, filas-1
-            tempo = this.getDiagonal(board, -1, 1);
-            for (i = 0; i < tempo.length && !nulo; i++) {
-                moves[c] = tempo[i];
-                c++;
-            }
 
+            }
+        }
+        //diagonal arriba izquierda columnas-1, filas-1
+        tempo = this.getDiagonal(board, -1, -1);
+        for (i = 0; i < tempo.length && !nulo; i++) {
+            if (tempo[i] != null) {
+                this.moves[c] = tempo[i];
+                c++;
+            }
+        }
+        //diagonal abajo derecha columnas+1, filas-1
+        tempo = this.getDiagonal(board, 1, 1);
+        for (i = 0; i < tempo.length && !nulo; i++) {
+            if (tempo[i] != null) {
+                this.moves[c] = tempo[i];
+                c++;
+            }
+        }
+        //diagonal abajo izquierda columnas+1, filas-1
+        tempo = this.getDiagonal(board, -1, 1);
+        for (i = 0; i < tempo.length && !nulo; i++) {
+            if (tempo[i] != null) {
+                this.moves[c] = tempo[i];
+                c++;
+
+            }
         }
 
         return moves;
-    }
 
+    }
 }

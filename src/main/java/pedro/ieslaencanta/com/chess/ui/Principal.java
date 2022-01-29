@@ -13,12 +13,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javax.swing.JPanel;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -31,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.bridge.TextNode;
 
 import org.apache.batik.dom.svg.SVGOMPoint;
 import org.apache.batik.swing.JSVGCanvas;
@@ -61,7 +65,7 @@ public class Principal extends Application implements EventListener {
     SVGPoint punto_origen, punto_destino;
     Document doc;
     SwingNode swingNode;
-
+    Message msg;
     String blancas_id[][] = {
         {"RW", "rook_white.svg"},
         {"NW", "knight_white.svg"},
@@ -97,6 +101,7 @@ public class Principal extends Application implements EventListener {
         this.escalax = this.anchocelda / 45.0f;
         this.escalay = this.altocelda / 45.0f;
         this.initGame();
+        this.msg = new Message("Jaque", 2000, this.doc);
 
         StackPane panel = new StackPane();
         panel.getChildren().add(swingNode);
@@ -104,7 +109,16 @@ public class Principal extends Application implements EventListener {
         Scene scene = new Scene(panel, this.width, this.height);
 
         stage.setTitle("DAW Ajedrez");
+        stage.setResizable(false);
         stage.setScene(scene);
+        //para que cierre al pulsar el icono
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
         stage.show();
 
     }
@@ -133,9 +147,9 @@ public class Principal extends Application implements EventListener {
     }
 
     private void getSVG() {
-        try {
+        /*try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            StreamResult sr = new StreamResult(new File("C:\\Users\\Pedro\\Desktop\\fotos_abuela\\salida.svg"));
+            StreamResult sr = new StreamResult(new File("fichero salida"));
             Result output = new StreamResult(System.out);
             Source input = new DOMSource(doc);
             try {
@@ -146,7 +160,7 @@ public class Principal extends Application implements EventListener {
             }
         } catch (TransformerConfigurationException ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
     private void initGame() {
@@ -175,17 +189,19 @@ public class Principal extends Application implements EventListener {
         this.swingNode.setContent(panel);
         this.loadPieces();
         this.createPieceBoard();
-        //this.getSVG();
 
+        //this.getSVG();
     }
 
     private void seleccionarCelda(MouseEvent m) {
         Element element = (Element) m.getCurrentTarget();
         int f, c;
+        Piece piece;
         f = (int) (m.getClientY() / this.altocelda);
         c = (int) (m.getClientX() / this.anchocelda);
         //si se ha pulsado sobre una figura y el turno es el correcto
-        if (element.getAttribute("class").equals("figura") && this.game.getPieceType(f, c) == this.game.getTurn()) {
+        if (element.getAttribute("class").equals("figura")
+                && this.game.getPieceType(f, c) == this.game.getTurn()) {
             this.punto_origen = new SVGOMPoint();
             this.punto_origen.setX(c);
             this.punto_origen.setY(f);
@@ -210,8 +226,9 @@ public class Principal extends Application implements EventListener {
     public void moverCelda(MouseEvent m) {
 
         Move mvs[];
+        String mensaje;
         Node n;
-        Move mate;
+        Move[] mates;
         this.punto_destino = new SVGOMPoint();
         this.punto_destino.setX((int) (m.getClientX() / this.anchocelda));
         this.punto_destino.setY((int) (m.getClientY() / this.altocelda));
@@ -236,13 +253,24 @@ public class Principal extends Application implements EventListener {
                     this.doc.getDocumentElement().removeChild(n);
                     this.unsetClassCell((int) this.punto_origen.getY(), (int) this.punto_origen.getX());
                 }
-                mate = this.game.Jaque((int) this.punto_destino.getY(), (int) this.punto_destino.getX());
+                mates = this.game.Jaque();
                 //se produce un mate
-                if (mate != null) {
-                    System.out.println("Se produce un mate");
-                    if (this.game.JaqueMate(mate.getOrigin().getType())) {
-                        System.out.println("Se produce un jaque mate");
+                if (mates != null && mates.length > 0) {
+
+                    //FALLA AQUÍ, CAMBIA LA POSICIÓN DEL REY
+                    if (this.game.JaqueMate(PieceType.Black)) {
+                        mensaje = "JAQUE MATE";
+                        System.out.println("Se produce un jaque mate a las negras");
+                    } else {
+                        if (this.game.JaqueMate(PieceType.White)) {
+                            mensaje = "JAQUE MATE";
+                        } else {
+                            mensaje = "JAQUE";
+
+                        }
                     }
+                    this.msg.setMsg(mensaje);
+                    this.msg.start();
                 }
                 this.unsetClassCell((int) this.punto_origen.getY(), (int) this.punto_origen.getX());
 
@@ -262,7 +290,7 @@ public class Principal extends Application implements EventListener {
     }
 
     private void clearMoves(Move[] mvs) {
-        for (int i = 0; i < mvs.length; i++) {
+        for (int i = 0; mvs != null && i < mvs.length; i++) {
             if (mvs[i] != null) {
                 this.unsetClassCell(mvs[i].getEnd().getRow(), mvs[i].getEnd().getCol());
 
@@ -280,6 +308,7 @@ public class Principal extends Application implements EventListener {
                 this.moverCelda((MouseEvent) event);
             }
         }
+
     }
 
     private void setClassCell(int row, int col, String cssclass) {
@@ -384,6 +413,8 @@ public class Principal extends Application implements EventListener {
 
             this.negras[i] = this.loadPiece(this.negras_id[i][1], this.negras_id[i][0], "scale(" + this.escalax + " " + this.escalay + ")", new Point2D(columna, fila));
             this.negras[i].load(this.doc);
+            this.negras[i].getElement().setAttributeNS(null, "class", "figura");
+
         }
         for (int i = 0; i < this.blancas.length; i++) {
 
