@@ -49,8 +49,7 @@ public abstract class Piece {
         Move move=null;
         try {
             //se crea el movimiento
-            Position origin;
-            origin= this.getPosition().clone();
+            Position origin= this.getPosition().clone();
             Position end = new Position(row, col);
             Piece p = board.getCell(row, col).getPiece();
             //en caso de que el destino tenga pieza, se elimina
