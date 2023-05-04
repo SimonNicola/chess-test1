@@ -1,0 +1,100 @@
+Examen teorico no tipotest y además de commandos
+
+
+coceptos basicos, gestion de volumenes logicos, directorios. /home cual es pepe/usuario etc/ usr/ directorios reservados
+
+Volumenes logios diferenciaar extendwer capacidad 
+
+gestion volumenes logicos, volumen fisico algo que identifica una particion
+
+Volume group agrupación de volumenes fisicos y lo vememos con un unico volumen pero puede 
+haber varias particiones 
+
+logical volume particion virtual toma particion de un volume group  es logico
+
+Gestion de volumenes logicos
+
+particion grub almacena el sistema de arranque
+
+mount para montar particiones 
+
+voulmenes y tipos cuales son, cosas genericas grub, particiones de linux que 
+extension tiene
+
+identificar el tipo de volumen
+
+no va a preguntar como redimensionar que es un grupo de volumenes 
+
+t.2.1
+
+Root, dollar, hash.
+
+t.2.2 
+
+pag. 5 dependencias, paquetes
+
+pag. 6
+
+pag. 7
+
+t.2.3
+
+t.2.4
+
+Directorios más importantes y que hacen o tienen
+
+jerarquica 
+
+lib mnt opt root media, y todo de l pagina anterior, var usr
+
+los que nosotros penemos mas importantes 5
+
+t.5.2.5 
+
+todo
+
+no entra cut ni en comandos
+
+pag 20
+
+añadir usauario a grupo saber
+
+t.5.2.6 permisos
+
+muy claro tener claro los permisos
+
+chmod entra 
+
+chown entra
+
+t.5.3.1
+
+que es un raid
+
+que tipos de raid
+
+como montar un raid
+
+pide un tipo de raid 0
+
+ventajas y inconvenientes de cada uno
+
+t.5.4
+
+tipos e enlaces
+
+duro y blando
+
+
+
+t.5.2
+saber explicar los tipos de enlaces y ejemplos
+
+---
+tener claro lo que hacer 
+
+t.5.5
+
+crontab saber lo que por lo menos. más en la parte de comados
+
+t.5.6 samba no entra, pero saber que es, y que sirve.
